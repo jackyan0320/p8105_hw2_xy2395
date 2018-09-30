@@ -39,7 +39,13 @@ data_nysubway =
   mutate( entry = recode(entry, "YES" = TRUE, "NO" = FALSE))
 ```
 
-The code above imported data from the `.csv` file, and cleaned up variable names using `clean_names` function. It also selected variables to be used from the original dataset. Further, it converted the entry variable from character (`YES` vs `NO`) to a logical variable. Now the dataset contains variables of line, station name, station latitude & longitude, routes served, entrance type, entry, vending, and ADA compliance. Now the dataset has `r nrow(data_nysubway)` rows (observations) and  `r ncol(data_nysubway)` columns (variables). The data are not yet tidy, because the routes that each station supports are spead along variables from route1 to route11. I will fix this problem in Question 4.
+The code above 
+
+* imported data from the `.csv` file, and cleaned up variable names using `clean_names` function. 
+* It also selected variables to be used from the original dataset. Now the dataset contains variables of line, station name, station latitude & longitude, routes served, entrance type, entry, vending, and ADA compliance. 
+* Further, it converted the entry variable from character (`YES` vs `NO`) to a logical variable. 
+* The dataset has `r nrow(data_nysubway)` rows (observations) and  `r ncol(data_nysubway)` columns (variables).
+* The data are not yet tidy, because the routes that each station supports are spead along variables from route1 to route11. I will fix this problem as instructed in Question 4.
 
 A datailed list of variables in this dataset is shown below:
 
@@ -143,7 +149,7 @@ data_prcpttn = bind_rows(data_prcpttn_2016, data_prcpttn_2017) %>%
 ```
 
 ## Interpretation
-There are `r nrow(data_mrtw)` observations and `r ncol(data_mrtw)` variables in the Mr. Trash Wheel dataset, and `r nrow(data_prcpttn)` observations and `r ncol(data_prcpttn)` variables in the precipitation dataset. Key variables in the Mr. Trash Wheel dataset include `dumpster`, `weight_tons`, number of different items (such as `sports_balls`) and `homes_powered`. For the precipitation dataset, the key variable is `total` which denotes the volumn of precipitation for each month. The total precipitation in 2017 was `r sum(filter(data_prcpttn_2017, year == 2017)$total)`. The median number of sports balls in a dumpster in 2016 was `median(filter(data_mrtw, year == 2016)$sports_balls)`.
+There are `r nrow(data_mrtw)` observations and `r ncol(data_mrtw)` variables in the Mr. Trash Wheel dataset, and `r nrow(data_prcpttn)` observations and `r ncol(data_prcpttn)` variables in the precipitation dataset. Key variables in the Mr. Trash Wheel dataset include `dumpster`, `weight_tons`, number of different items (such as `sports_balls`) and `homes_powered`. For the precipitation dataset, the key variable is `total` which denotes the volumn of precipitation for each month. The total precipitation in 2017 was `r sum(filter(data_prcpttn_2017, year == 2017)$total)`. The median number of sports balls in a dumpster in 2016 was `r median(filter(data_mrtw, year == 2016)$sports_balls)`.
 
 # Problem 3
 
@@ -195,7 +201,7 @@ distinct(structured_brfss, locationabbr) %>%
 # What state is observed the most?
 count(structured_brfss, locationabbr) %>% 
   arrange(desc(n)) %>% 
-  head(1)
+  head()
 # In 2002, what is the median of the “Excellent” response value?
 structured_brfss_2002 = filter(structured_brfss, year == 2002) 
 median(structured_brfss_2002$excellent, na.rm = T)
@@ -207,7 +213,7 @@ Make a histogram of “Excellent” response values in the year 2002.
 
 ```{r}
 ggplot(structured_brfss_2002, aes(x = excellent)) + 
-  geom_histogram()
+  geom_histogram(binwidth = 1, na.rm = T)
 ```
 
 Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010.
