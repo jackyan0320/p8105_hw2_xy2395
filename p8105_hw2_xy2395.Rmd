@@ -47,11 +47,11 @@ names(data_nysubway)
 
 ```{r}
 data_nysubway = mutate(data_nysubway, station_name_line = paste(station_name, line) )
-distinct_line_station_name = distinct(data_nysubway, line_station_name)
-nrow(distinct_line_station_name)
+distinct_station_name_line = distinct(data_nysubway, station_name_line)
+nrow(distinct_station_name_line)
 ```
 
-There are `r nrow(distinct_line_station_name)` stations.
+There are `r nrow(distinct_station_name_line)` stations.
 
 ### Question 2
 ```{r}
@@ -82,6 +82,8 @@ n_without_vending_allow_entrance / n_without_vending
 The proportion of station entrances / exits without vending allow entrance is `r round(n_without_vending_allow_entrance / n_without_vending, 2)`.
 
 ### Question 4
+
+Use `gather` to tidy the data so that each value in the previous variables (from `route1` to `route11`) is gathered into a new variable `route_served`. Then filter out `NA`s and delete the unnecessary `route_number` variable.
 
 ```{r}
 tidy_data_nysubway = 
