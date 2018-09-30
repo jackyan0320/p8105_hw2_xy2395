@@ -106,4 +106,7 @@ tidy_data_nysubway %>%
 There are 60 distinct stations serving the A train, and 17 of them are ADA compliant.
 
 # Problem 2
+```{r}
+
+```
 
