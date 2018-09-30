@@ -32,7 +32,7 @@ data_nysubway =
   mutate( entry = recode(entry, "YES" = TRUE, "NO" = FALSE))
 ```
 
-The code above imported data from the `.csv` file, and cleaned up variable names using `clean_names` function. It also selected variables to be used from the original dataset. Further, it converted the entry variable from character (`YES` vs `NO`) to a logical variable. Now the dataset contains variables of line, station name, station latitude & longitude, routes served, entrance type, entry, vending, and ADA compliance. Now the dataset has `r nrow(data_nysubway)` rows (observations) and  `r ncol(data_nysubway)` columns (variables). I think the data are tidy_ish now.
+The code above imported data from the `.csv` file, and cleaned up variable names using `clean_names` function. It also selected variables to be used from the original dataset. Further, it converted the entry variable from character (`YES` vs `NO`) to a logical variable. Now the dataset contains variables of line, station name, station latitude & longitude, routes served, entrance type, entry, vending, and ADA compliance. Now the dataset has `r nrow(data_nysubway)` rows (observations) and  `r ncol(data_nysubway)` columns (variables). The data are not yet tidy, because the routes that each station supports are spead along variables from route1 to route11. I will fix this problem in Question 4.
 
 A datailed list of variables in this dataset is shown below:
 
@@ -44,20 +44,23 @@ names(data_nysubway)
 ## Questions
 
 ### Question 1
+
 ```{r}
-data_nysubway = mutate(data_nysubway, line_station_name = paste(station_name, line) )
+data_nysubway = mutate(data_nysubway, station_name_line = paste(station_name, line) )
 distinct_line_station_name = distinct(data_nysubway, line_station_name)
 nrow(distinct_line_station_name)
 ```
+
 There are `r nrow(distinct_line_station_name)` stations.
 
 ### Question 2
 ```{r}
 data_nysubway %>% 
   filter(ada == TRUE) %>% 
-  distinct(line_station_name) %>% 
+  distinct(station_name_line) %>% 
   nrow()
 ```
+
 There are 84 ADA compliant stations.
 
 ### Question 3
@@ -66,11 +69,39 @@ n_without_vending =
   data_nysubway %>% 
   filter( vending == "NO") %>% 
   nrow()
+
 n_without_vending_allow_entrance = 
   data_nysubway %>% 
   filter( vending == "NO") %>% 
   filter( entry == TRUE) %>% 
   nrow()
+
 n_without_vending_allow_entrance / n_without_vending
 ```
+
 The proportion of station entrances / exits without vending allow entrance is `r round(n_without_vending_allow_entrance / n_without_vending, 2)`.
+
+### Question 4
+
+```{r}
+tidy_data_nysubway = 
+  gather(data_nysubway, key = route_number, value = route_served, route1:route11) %>% 
+  filter(route_served != 'NA') %>% 
+  select(-route_number)
+
+tidy_data_nysubway %>% 
+  filter(route_served == "A") %>% 
+  distinct(station_name_line) %>% 
+  nrow()
+
+tidy_data_nysubway %>% 
+  filter(route_served == "A") %>% 
+  filter(ada == TRUE) %>% 
+  distinct(station_name_line) %>% 
+  nrow()
+```
+
+There are 60 distinct stations serving the A train, and 17 of them are ADA compliant.
+
+# Problem 2
+
