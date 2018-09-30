@@ -9,8 +9,14 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(readxl)
-# devtools::install_github("p8105/p8105.datasets")
-data(package = 'p8105.datasets',  brfss_smart2010)
+library(p8105.datasets)
+# data(package = 'p8105.datasets',  brfss_smart2010)
+```
+
+```{r, eval = F}
+library(tidyverse)
+library(readxl)
+library(p8105.datasets)
 ```
 
 # Problem 1
@@ -137,5 +143,48 @@ Write a paragraph about these data; you are encouraged to use inline R. Be sure 
 
 # Problem 3
 
+```{r}
+tidy_brfss = 
+  brfss_smart2010 %>% 
+  janitor::clean_names() %>% 
+  filter(topic == "Overall Health")  %>% 
+  select(-(class:question), -sample_size, -(confidence_limit_low : geo_location)) %>% 
+  arrange(locationdesc)
+  
+structured_brfss = 
+  spread(tidy_brfss, key = response, value = data_value) %>% 
+  janitor::clean_names() %>% 
+  select(year, locationabbr, locationdesc, excellent, very_good, good, fair, poor) %>% 
+  mutate(excellent_and_very_good = excellent + very_good)
+  
+```
+
+```{r}
+# How many unique locations are included in the dataset?
+distinct(structured_brfss, locationdesc) %>% 
+  nrow()
+# Is every state represented? 
+distinct(structured_brfss, locationabbr) %>% 
+  nrow()
+# What state is observed the most?
+count(structured_brfss, locationabbr) %>% 
+  arrange(desc(n)) %>% 
+  head(1)
+# In 2002, what is the median of the “Excellent” response value?
+structured_brfss_2002 = filter(structured_brfss, year == 2002) 
+median(structured_brfss_2002$excellent, na.rm = T)
+# Make a histogram of “Excellent” response values in the year 2002
+ggplot(structured_brfss_2002, aes(x = excellent)) + 
+  geom_histogram()
+# Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010.
+structured_brfss_ny = 
+  structured_brfss %>% 
+  filter(year>=2002, year<=2010) %>% 
+  filter(locationdesc == "NY - Queens County" | locationdesc ==  "NY - New York County")
+
+ggplot(structured_brfss_ny, aes(x = year, y = excellent)) + 
+  geom_point(aes(color = locationdesc))
+
+```
 
 
