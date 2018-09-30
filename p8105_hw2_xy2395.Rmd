@@ -208,7 +208,7 @@ median(structured_brfss_2002$excellent, na.rm = T)
 ```
 
 ## Graphs
-
+### Histogram
 Make a histogram of “Excellent” response values in the year 2002.
 
 ```{r}
