@@ -182,29 +182,42 @@ structured_brfss =
   mutate(excellent_and_very_good = excellent + very_good)
  
 ```
+
 ## Questions
 
 * There are `r distinct(structured_brfss, locationdesc) %>% nrow()` unique locations included in the dataset.
 * There are `r distinct(structured_brfss, locationabbr) %>% nrow()` distinct locations in the variable `locationabbr`, representing all the 50 states and DC.
 * `r (count(structured_brfss, locationabbr) %>% arrange(desc(n)))$locationabbr[1]` is observed the most.
-* The median of the “Excellent” response value in 2002 was `r filter(structured_brfss, year == 2002)$excellent %>% median(na.rm = T)`.
+* The median of the “Excellent” response value in 2002 was `r filter(structured_brfss, year == 2002)$excellent %>% median(na.rm = TRUE)`.
 
 Code calculating these questions are shown below:
 
+Q1. How many unique locations are included in the dataset?
 ```{r}
-# How many unique locations are included in the dataset?
 distinct(structured_brfss, locationdesc) %>% 
   nrow()
-# Is every state represented? 
+```
+
+Q2. Is every state represented? 
+```{r}
 distinct(structured_brfss, locationabbr) %>% 
   nrow()
-# What state is observed the most?
-count(structured_brfss, locationabbr) %>% 
-  arrange(desc(n)) %>% 
-  head()
-# In 2002, what is the median of the “Excellent” response value?
+```
+
+Q3. What state is observed the most?
+```{r}
+states_observed_ordered_list = 
+  count(structured_brfss, locationabbr) %>% 
+  arrange(desc(n)) 
+
+head(states_observed_ordered_list)
+state.name[which(state.abb == states_observed_ordered_list$locationabbr[1])]
+```
+
+Q4. In 2002, what is the median of the “Excellent” response value?
+```{r}
 structured_brfss_2002 = filter(structured_brfss, year == 2002) 
-median(structured_brfss_2002$excellent, na.rm = T)
+median(structured_brfss_2002$excellent, na.rm = TRUE)
 ```
 
 ## Graphs
